@@ -20,12 +20,16 @@ func NewUserController(_userService services.UserService) *UserController {
 }
 
 func (uc *UserController) GetUserById(w http.ResponseWriter, r *http.Request) {
+	userClaims, ok := r.Context().Value("userClaims").(*utils.UserClaims)
+	if !ok {
+		utils.WriteJsonErrorResponse(w, http.StatusUnauthorized, "Unauthorized access", fmt.Errorf("user claims not found in context"))
+		return
+	}
 	fmt.Println("Fetching user by ID in UserController")
 	// extract userid from url parameters
 	userId := r.URL.Query().Get("id")
 	if userId == "" {
-		utils.WriteJsonErrorResponse(w, http.StatusBadRequest, "User ID is required", fmt.Errorf("missing user ID"))
-		return
+		userId = strconv.Itoa(int(userClaims.UserId))
 	}
 	id, err := strconv.ParseInt(userId, 10, 64)
 	if err != nil {

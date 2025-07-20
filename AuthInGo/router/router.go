@@ -2,6 +2,7 @@ package router
 
 import (
 	"AuthInGo/controllers"
+	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -11,7 +12,7 @@ type Router interface {
 	Register(r chi.Router)
 }
 
-func SetupRouter(UserRouter Router) *chi.Mux {
+func SetupRouter(UserRouter Router) http.Handler {
 
 	chiRouter := chi.NewRouter()
 

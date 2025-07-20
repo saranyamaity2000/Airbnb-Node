@@ -1,7 +1,6 @@
 package services
 
 import (
-	env "AuthInGo/config/env"
 	db "AuthInGo/db/repositories"
 	"AuthInGo/dto"
 	"AuthInGo/models"
@@ -86,14 +85,11 @@ func (u *UserServiceImpl) LoginUser(payload *dto.LoginUserRequestDTO) (string, e
 	}
 
 	// Step 4. If password matches, print a JWT token, else return error saying password does not match
-	jwtPayload := jwt.MapClaims{
-		"email": user.Email,
-		"id":    user.Id,
-	}
+	userClaims := utils.NewUserClaim(user.Id, user.Email)
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwtPayload)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, userClaims)
 
-	tokenString, err := token.SignedString([]byte(env.GetString("JWT_SECRET", "TOKEN")))
+	tokenString, err := token.SignedString([]byte(utils.AuthSecretToken))
 
 	if err != nil {
 		fmt.Println("Error signing token:", err)
