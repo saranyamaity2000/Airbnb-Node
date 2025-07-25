@@ -2,7 +2,6 @@ package router
 
 import (
 	"AuthInGo/controllers"
-	"AuthInGo/utils"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -12,7 +11,7 @@ type Router interface {
 	Register(r chi.Router)
 }
 
-func SetupRouter(UserRouter Router) *chi.Mux {
+func SetupRouter(routers []Router) *chi.Mux {
 
 	chiRouter := chi.NewRouter()
 
@@ -23,12 +22,11 @@ func SetupRouter(UserRouter Router) *chi.Mux {
 
 	chiRouter.Get("/ping", controllers.PingHandler)
 
-	chiRouter.HandleFunc("/fakestoreservice/*", utils.ProxyToService("https://fakestoreapi.in", "/fakestoreservice"))
-
-	UserRouter.Register(chiRouter)
+	for _, r := range routers {
+		r.Register(chiRouter)
+	}
 
 	return chiRouter
-
 }
 
 // http://localhost:3001/fakestoreservice/products/category

@@ -12,6 +12,8 @@ func ProxyToService(targetBaseUrl string, pathPrefix string) http.HandlerFunc {
 
 	target, err := url.Parse(targetBaseUrl)
 
+	fmt.Println("target", target)
+
 	if err != nil {
 		fmt.Println("Error parsing target URL:", err)
 		return nil
